@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TP NODE 2</title>
+</head>
+<body>
+  <h1>Bienvenue sur ma page</h1>
+  <p>Voici l'exercice d'automatisation, généré via ansible & Terraform :</p>
+  <ul>
+    <li>HTML</li>
+    <li>CSS</li>
+    <li>JavaScript</li>
+  </ul>
+  <p>Mettez moi une bonne note svp</p>
+</body>
+</html>
