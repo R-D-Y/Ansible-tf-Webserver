@@ -1,6 +1,9 @@
-# HTML-PROJET
+# HTML-PROJECT
 
-HTML 1 : page statique html pour le node 1
-HTML 2 : page statique html pour le node 2
-node 1 & node 2 : playbook a lancer sur sur ansible afin :
-d'installer NGNINX, le paramétrer, d'aller chercher mes pages statiques html et de les mettres dans les sites availables afin que mes nodes affiche mes pages html.
+HTML 1 : Static HTML page for Node1
+
+HTML 2 : Static HTML page for Node2
+
+Node1.yml & Node2.yml : Ansible Playbook based on my Local computer :
+
+NGINX Install, NGINX settings, Grab my HTML statics pages and deploy on availables-sites of NGINX.
