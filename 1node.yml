@@ -50,7 +50,6 @@
         force: yes
       notify: Restart Nginx
 
-
   handlers:
     - name: Restart Nginx
       service:
