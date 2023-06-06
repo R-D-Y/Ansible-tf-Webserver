@@ -9,3 +9,5 @@ MAIN.TF : Provide ressource
 NETWORK.TF : Provide NT ressource
 
 config.yaml : Mapping personnal parameters
+
+*.tf & *.yaml will be soon available
