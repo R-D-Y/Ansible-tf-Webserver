@@ -21,4 +21,61 @@ This repository provides automation scripts for deploying a static HTML page on 
 2. After the VMs are created, extract their public IP addresses and update `inventory.ini` in Ansible with these IPs.
 3. Run the Ansible playbooks which will update the virtual machines, install Nginx, and fetch the HTML pages from a GitHub repository to display them on the VMs.
 
-For detailed instructions and usage, please refer to the documentation.
+## Getting Started 
+
+1. Clone the repository:
+
+```plaintext
+git clone https://github.com/R-D-Y/HAnsible-tf-Webserver.git
+```
+
+
+2. Navigate to the project directory:
+
+```plaintext
+cd your-repo
+```
+
+
+3. Initialize Terraform:
+
+```plaintext
+terraform init
+```
+
+
+4. Review and modify the Terraform configuration files according to your requirements. (Like your subscription ID for example)
+
+5. Creates an execution plan:
+
+```plaintext
+terraform plan
+```
+
+6. Deploy the infrastructure:
+
+```plaintext
+terraform apply
+```
+
+7. Once terraform is launch, put vm ip's on `inventory.ini`
+
+8. Run the Ansible playbook to deploy the web server and configure the VMs:
+
+```plaintext
+ansible-playbook 1node.yml
+ansible-playbook 2node.yml
+```
+
+
+## Cleanup
+To remove the deployed infrastructure, run:
+
+```plaintext
+terraform destroy --auto-approve
+```
+
+**Note:** This will permanently delete all resources created by this project.
+
+# License
+This project is licensed under the MIT License.
