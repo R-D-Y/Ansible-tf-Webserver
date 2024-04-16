@@ -33,6 +33,7 @@
         mode: preserve
         owner: nginx
         group: nginx
+        remote_src: true
 
     - name: Create sites-available directory (if not using a default Nginx config)
       file:
