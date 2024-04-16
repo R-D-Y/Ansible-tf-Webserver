@@ -49,7 +49,7 @@
 
     - name: Apply Nginx template (if custom configuration is needed)
       template:
-        src: files/nginx.conf.j2
+        src: nginx.conf.j2  # Assuming it is placed at the root of the templates directory
         dest: /etc/nginx/sites-available/default
       notify:
         - Restart Nginx
