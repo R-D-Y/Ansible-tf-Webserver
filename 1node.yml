@@ -1,10 +1,6 @@
 ---
 - hosts: all
   become: yes
-  vars:
-    server_name: "{{ ansible_default_ipv4.address }}"
-    document_root: /var/www/html
-    app_root: html_demo_site-main
 
   tasks:
     - name: Update cache and install Nginx
@@ -13,58 +9,19 @@
         state: latest
         update_cache: yes
 
-    - name: Ensure document root exists
-      file:
-        path: "{{ document_root }}"
-        state: directory
-        mode: '0755'
-        owner: nginx
-        group: nginx
+    - name: Ensure Nginx is enabled and running
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
 
     - name: Download website files from URL
       get_url:
         url: https://raw.githubusercontent.com/R-D-Y/Ansible-tf-Webserver/main/HTML-PAGE-NODE-1.html
-        dest: "/tmp/index.html"
+        dest: /usr/share/nginx/html/index.html
+        mode: '0644'
 
-    - name: Copy website files to the server's document root
-      copy:
-        src: "/tmp/index.html"
-        dest: "{{ document_root }}/index.html"
-        mode: preserve
-        owner: nginx
-        group: nginx
-        remote_src: true
-
-    - name: Create sites-available directory (if not using a default Nginx config)
-      file:
-        path: /etc/nginx/sites-available
-        state: directory
-        mode: '0755'
-
-    - name: Create sites-enabled directory (if not using a default Nginx config)
-      file:
-        path: /etc/nginx/sites-enabled
-        state: directory
-        mode: '0755'
-
-    - name: Apply Nginx template (if custom configuration is needed)
-      template:
-        src: nginx.conf.j2  # Assuming it is placed at the root of the templates directory
-        dest: /etc/nginx/sites-available/default
-      notify:
-        - Restart Nginx
-
-    - name: Enable new site (if not using a default Nginx config)
-      file:
-        src: /etc/nginx/sites-available/default
-        dest: /etc/nginx/sites-enabled/default
-        state: link
-        force: yes
-      notify:
-        - Restart Nginx
-
-  handlers:
-    - name: Restart Nginx
-      service:
+    - name: Ensure nginx is restarted
+      systemd:
         name: nginx
         state: restarted
