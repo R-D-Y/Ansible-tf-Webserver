@@ -6,8 +6,8 @@
     document_root: /var/www
     app_root: html_demo_site-main
   tasks:
-    - name: Update apt cache and install Nginx
-      apt:
+    - name: Update cache and install Nginx
+      dnf:
         name: nginx
         state: latest
         update_cache: yes
@@ -24,25 +24,25 @@
         mode: preserve
         remote_src: yes
 
-    - name: Create sites-available directory
+    - name: Create sites-available directory (if not using a default Nginx config)
       file:
         path: /etc/nginx/sites-available
         state: directory
         mode: 0755
 
-    - name: Create sites-enabled directory
+    - name: Create sites-enabled directory (if not using a default Nginx config)
       file:
         path: /etc/nginx/sites-enabled
         state: directory
         mode: 0755
 
-    - name: Apply Nginx template
+    - name: Apply Nginx template (if custom configuration is needed)
       template:
         src: files/nginx.conf.j2
         dest: /etc/nginx/sites-available/default
       notify: Restart Nginx
 
-    - name: Enable new site
+    - name: Enable new site (if not using a default Nginx config)
       file:
         src: /etc/nginx/sites-available/default
         dest: /etc/nginx/sites-enabled/default
