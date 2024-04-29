@@ -3,6 +3,7 @@
   vars:
     ssl_cert: "/etc/ssl/certs/nginx-selfsigned.crt"
     ssl_key: "/etc/ssl/private/nginx-selfsigned.key"
+    csr_path: "/etc/ssl/certs/nginx-selfsigned.csr"
 
   tasks:
     - name: Update cache and install Nginx
@@ -24,10 +25,17 @@
       openssl_privatekey:
         path: "{{ ssl_key }}"
 
+    - name: Generate OpenSSL CSR
+      openssl_csr:
+        path: "{{ csr_path }}"
+        privatekey_path: "{{ ssl_key }}"
+        common_name: "ESGI" # Remplacez par votre nom commun (domaine)
+
     - name: Generate OpenSSL certificate
       openssl_certificate:
         path: "{{ ssl_cert }}"
         privatekey_path: "{{ ssl_key }}"
+        csr_path: "{{ csr_path }}"
         provider: selfsigned
 
     - name: Download website files from URL
@@ -42,7 +50,7 @@
         block: |
           server {
             listen 443 ssl;
-            server_name _; # Use your domain or keep underscore for default
+            server_name _; # Utilisez votre domaine ou gardez l'underscore pour par défaut
             ssl_certificate {{ ssl_cert }};
             ssl_certificate_key {{ ssl_key }};
 
