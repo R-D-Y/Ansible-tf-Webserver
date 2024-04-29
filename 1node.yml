@@ -11,6 +11,15 @@
         state: latest
         update_cache: yes
 
+    - name: Create SSL directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /etc/ssl/certs
+        - /etc/ssl/private
+
     - name: Generate OpenSSL private key
       openssl_privatekey:
         path: "{{ ssl_key }}"
