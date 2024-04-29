@@ -1,0 +1,74 @@
+- hosts: all
+  become: yes
+  vars:
+    domain_name: "nmlbrigite.fr"
+    www_domain: "www.nmlbrigite.fr"
+    email: "keegantofeneck@gmail.com"  # Remplacez par votre adresse e-mail
+    ssl_cert: "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
+    ssl_key: "/etc/letsencrypt/live/{{ domain_name }}/privkey.pem"
+    web_root: "/usr/share/nginx/html"
+
+  tasks:
+    - name: Update cache and install Nginx
+      dnf:
+        name: nginx
+        state: latest
+        update_cache: yes
+
+    - name: Install EPEL repository
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Install Certbot for Nginx
+      yum:
+        name: certbot-nginx
+        state: present
+
+    - name: Download website files from URL
+      get_url:
+        url: https://raw.githubusercontent.com/R-D-Y/Ansible-tf-Webserver/main/HTML-PAGE-NODE-1.html
+        dest: "{{ web_root }}/index.html"
+        mode: '0644'
+
+    - name: Obtain or renew a certificate with Certbot
+      command: >
+        certbot --nginx -d "{{ domain_name }}" -d "{{ www_domain }}"
+        --non-interactive --agree-tos --email "{{ email }}"
+      args:
+        creates: "{{ ssl_cert }}"
+
+    - name: Configure Nginx to use SSL within http context
+      blockinfile:
+        path: "/etc/nginx/nginx.conf"
+        block: |
+          server {
+            listen 443 ssl;
+            server_name {{ domain_name }} {{ www_domain }};
+            ssl_certificate {{ ssl_cert }};
+            ssl_certificate_key {{ ssl_key }};
+
+            location / {
+              root {{ web_root }};
+              index index.html index.htm;
+            }
+          }
+
+          server {
+            listen 80;
+            server_name {{ domain_name }} {{ www_domain }};
+            return 301 https://$host$request_uri;
+          }
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        insertafter: "http {"
+
+    - name: Ensure Nginx is enabled and running
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Ensure nginx is restarted to apply all configurations
+      systemd:
+        name: nginx
+        state: restarted
