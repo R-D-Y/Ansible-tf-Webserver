@@ -3,7 +3,6 @@
   vars:
     ssl_cert: "/etc/ssl/certs/nginx-selfsigned.crt"
     ssl_key: "/etc/ssl/private/nginx-selfsigned.key"
-    csr_path: "/etc/ssl/certs/nginx-selfsigned.csr"
 
   tasks:
     - name: Update cache and install Nginx
@@ -29,7 +28,7 @@
       openssl_csr:
         path: "{{ csr_path }}"
         privatekey_path: "{{ ssl_key }}"
-        common_name: "ESGI" # Remplacez par votre nom commun (domaine)
+        common_name: "your_common_name_here"
 
     - name: Generate OpenSSL certificate
       openssl_certificate:
@@ -44,13 +43,13 @@
         dest: /usr/share/nginx/html/index.html
         mode: '0644'
 
-    - name: Configure Nginx to use SSL
+    - name: Configure Nginx to use SSL within http context
       blockinfile:
         path: /etc/nginx/nginx.conf
         block: |
           server {
             listen 443 ssl;
-            server_name _; # Utilisez votre domaine ou gardez l'underscore pour par défaut
+            server_name _;
             ssl_certificate {{ ssl_cert }};
             ssl_certificate_key {{ ssl_key }};
 
@@ -59,6 +58,8 @@
               index index.html index.htm;
             }
           }
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        insertafter: "http {"
 
     - name: Ensure Nginx is enabled and running
       systemd:
