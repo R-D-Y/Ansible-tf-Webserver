@@ -1,6 +1,8 @@
----
 - hosts: all
   become: yes
+  vars:
+    ssl_cert: "/etc/ssl/certs/nginx-selfsigned.crt"
+    ssl_key: "/etc/ssl/private/nginx-selfsigned.key"
 
   tasks:
     - name: Update cache and install Nginx
@@ -9,16 +11,15 @@
         state: latest
         update_cache: yes
 
-    - name: Install Certbot for Nginx
-      dnf:
-        name: certbot-nginx
-        state: latest
+    - name: Generate OpenSSL private key
+      openssl_privatekey:
+        path: "{{ ssl_key }}"
 
-    - name: Ensure Nginx is enabled and running
-      systemd:
-        name: nginx
-        state: started
-        enabled: yes
+    - name: Generate OpenSSL certificate
+      openssl_certificate:
+        path: "{{ ssl_cert }}"
+        privatekey_path: "{{ ssl_key }}"
+        provider: selfsigned
 
     - name: Download website files from URL
       get_url:
@@ -26,8 +27,27 @@
         dest: /usr/share/nginx/html/index.html
         mode: '0644'
 
-    - name: Obtain SSL certificate
-      shell: certbot --nginx -d yourdomain.com --non-interactive --agree-tos --email your-email@example.com
+    - name: Configure Nginx to use SSL
+      blockinfile:
+        path: /etc/nginx/nginx.conf
+        block: |
+          server {
+            listen 443 ssl;
+            server_name _; # Use your domain or keep underscore for default
+            ssl_certificate {{ ssl_cert }};
+            ssl_certificate_key {{ ssl_key }};
+
+            location / {
+              root /usr/share/nginx/html;
+              index index.html index.htm;
+            }
+          }
+
+    - name: Ensure Nginx is enabled and running
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
 
     - name: Ensure nginx is restarted
       systemd:
