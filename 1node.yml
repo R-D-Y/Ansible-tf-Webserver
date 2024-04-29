@@ -3,6 +3,7 @@
   vars:
     ssl_cert: "/etc/ssl/certs/nginx-selfsigned.crt"
     ssl_key: "/etc/ssl/private/nginx-selfsigned.key"
+    csr_path: "/etc/ssl/certs/nginx-selfsigned.csr"  # Declare the CSR path here
 
   tasks:
     - name: Update cache and install Nginx
@@ -28,8 +29,7 @@
       openssl_csr:
         path: "{{ csr_path }}"
         privatekey_path: "{{ ssl_key }}"
-        common_name: "your_common_name_here"
-
+        common_name: "ESGI" # 
     - name: Generate OpenSSL certificate
       openssl_certificate:
         path: "{{ ssl_cert }}"
@@ -40,16 +40,16 @@
     - name: Download website files from URL
       get_url:
         url: https://raw.githubusercontent.com/R-D-Y/Ansible-tf-Webserver/main/HTML-PAGE-NODE-1.html
-        dest: /usr/share/nginx/html/index.html
+        dest: "/usr/share/nginx/html/index.html"
         mode: '0644'
 
     - name: Configure Nginx to use SSL within http context
       blockinfile:
-        path: /etc/nginx/nginx.conf
+        path: "/etc/nginx/nginx.conf"
         block: |
           server {
             listen 443 ssl;
-            server_name _;
+            server_name _; # Use your domain or keep underscore for default
             ssl_certificate {{ ssl_cert }};
             ssl_certificate_key {{ ssl_key }};
 
