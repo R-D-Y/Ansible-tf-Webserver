@@ -16,12 +16,12 @@
         update_cache: yes
 
     - name: Install EPEL repository
-      yum:
+      dnf:
         name: epel-release
         state: present
 
     - name: Install Certbot for Nginx
-      yum:
+      dnf:
         name: certbot-nginx
         state: present
 
