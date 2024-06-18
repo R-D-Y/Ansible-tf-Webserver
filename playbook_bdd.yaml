@@ -8,26 +8,18 @@
     mysql_password: "userpassword"
     python_script_path: "./script.py"
   tasks:
-    - name: Install MySQL on RedHat/CentOS
-      when: ansible_facts['os_family'] == 'RedHat'
-      dnf:
-        name: mariadb-server
+    - name: Install MariaDB (compatible avec MySQL)
+      yum:
+        name: mariadb105-server
         state: present
 
-    - name: Install MySQL on Debian/Ubuntu
-      when: ansible_facts['os_family'] == 'Debian'
-      apt:
-        name: mysql-server
-        state: present
-        update_cache: yes
-
-    - name: Start MySQL service
+    - name: Start MariaDB service
       service:
-        name: mysql
+        name: mariadb
         state: started
         enabled: yes
 
-    - name: Set MySQL root password
+    - name: Set MariaDB root password
       mysql_user:
         name: root
         host: localhost
@@ -35,7 +27,7 @@
         state: present
 
     - name: Install required Python packages
-      dnf:
+      yum:
         name: "{{ item }}"
         state: present
       loop:
