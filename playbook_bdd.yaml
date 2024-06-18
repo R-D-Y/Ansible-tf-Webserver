@@ -1,8 +1,12 @@
 - name: Setup MySQL and Database
   hosts: db_servers
   become: yes
-  vars_files:
-    - vars.yml
+  vars:
+    mysql_root_password: "rootpassword"
+    mysql_database: "my_app"
+    mysql_user: "my_user"
+    mysql_password: "userpassword"
+    python_script_path: "/path/to/your/script.py"
   tasks:
     - name: Install MySQL
       dnf:
