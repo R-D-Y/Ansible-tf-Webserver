@@ -5,7 +5,7 @@
     - vars.yml
   tasks:
     - name: Install MySQL
-      apt:
+      dnf:
         name: mysql-server
         state: present
 
@@ -23,7 +23,7 @@
         state: present
 
     - name: Install required Python packages
-      apt:
+      dnf:
         name: "{{ item }}"
       loop:
         - python3
