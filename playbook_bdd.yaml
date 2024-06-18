@@ -9,7 +9,7 @@
     python_script_path: "./script.py"
   tasks:
     - name: Install MariaDB (compatible avec MySQL)
-      yum:
+      dnf:
         name: mariadb105-server
         state: present
 
@@ -27,7 +27,7 @@
         state: present
 
     - name: Install required Python packages
-      yum:
+      dnf:
         name: "{{ item }}"
         state: present
       loop:
