@@ -1,5 +1,5 @@
 - name: Setup MySQL and Database
-  hosts: db_servers
+  hosts: all
   become: yes
   vars:
     mysql_root_password: "rootpassword"
