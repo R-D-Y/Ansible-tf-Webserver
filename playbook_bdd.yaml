@@ -19,6 +19,29 @@
         state: started
         enabled: yes
 
+    - name: Secure MariaDB installation
+      command: >
+        mysql_secure_installation --use-default --password={{ mysql_root_password }}
+      args:
+        creates: /var/lib/mysql/.mysql_secure_installation
+
+    - name: Create administrative user for MariaDB
+      mysql_user:
+        name: admin
+        password: "{{ mysql_root_password }}"
+        host: localhost
+        priv: '*.*:ALL,GRANT'
+        state: present
+
+    - name: Set MariaDB root password (using admin user)
+      mysql_user:
+        login_user: admin
+        login_password: "{{ mysql_root_password }}"
+        name: root
+        host: localhost
+        password: "{{ mysql_root_password }}"
+        state: present
+
     - name: Install required Python packages
       dnf:
         name: "{{ item }}"
@@ -26,18 +49,6 @@
       loop:
         - python3
         - python3-pip
-
-    - name: Install PyMySQL for Python 3
-      pip:
-        name: PyMySQL
-        state: present
-
-    - name: Set MariaDB root password
-      mysql_user:
-        name: root
-        host: localhost
-        password: "{{ mysql_root_password }}"
-        state: present
 
     - name: Install MySQL connector for Python
       pip:
