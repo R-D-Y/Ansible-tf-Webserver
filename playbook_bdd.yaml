@@ -6,7 +6,7 @@
     mysql_database: "my_app"
     mysql_user: "my_user"
     mysql_password: "userpassword"
-    python_script_path: "/path/to/your/script.py"
+    python_script_path: "./script.py"
   tasks:
     - name: Install MySQL on RedHat/CentOS
       when: ansible_facts['os_family'] == 'RedHat'
