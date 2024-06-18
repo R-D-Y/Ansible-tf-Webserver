@@ -10,7 +10,7 @@
   tasks:
     - name: Install MySQL
       dnf:
-        name: mysql-server
+        name: mariadb-server
         state: present
 
     - name: Start MySQL service
